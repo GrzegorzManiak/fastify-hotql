@@ -23,7 +23,7 @@ createFastifyApp({
   prefix : '/graphql',
   graphiql: true,
   graphiql_prefix: '/explorer',
-  graphiql_endpoint: '/graphiql',
+  graphiql_endpoint: '/graphql',
   graphql: {
     schema: buildSchema(`
       type Query {

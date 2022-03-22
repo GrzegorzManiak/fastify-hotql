@@ -1,5 +1,5 @@
 import URL from 'url';
-import { GraphiQLData, resolveGraphiQLString } from 'apollo-server-module-graphiql';
+import { resolveGraphiQLString } from 'apollo-server-module-graphiql';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 
 export default (fastify: FastifyInstance, options: {

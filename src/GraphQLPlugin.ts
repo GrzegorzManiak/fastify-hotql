@@ -1,66 +1,60 @@
-import { runHttpQuery, GraphQLOptions }                  from 'apollo-server-core';
+import { runHttpQuery, GraphQLOptions } from 'apollo-server-core';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { IncomingMessage, OutgoingMessage, Server }      from 'http';
 
-function GraphQLPlugin(fastify: FastifyInstance<Server, IncomingMessage, OutgoingMessage>, pluginOptions: { prefix: string, graphql: Function | GraphQLOptions }, next: (err?: Error) => void) {
-  if (!pluginOptions) throw new Error('Fastify GraphQL requires options!');
-  else if (!pluginOptions.prefix) throw new Error('Fastify GraphQL requires `prefix` to be part of passed options!');
-  else if (!pluginOptions.graphql) throw new Error('Fastify GraphQL requires `graphql` to be part of passed options!');
+import graphiQL from './GraphiQLPlugin';
 
-  const handler = async (request: FastifyRequest<IncomingMessage>, reply: FastifyReply<OutgoingMessage>) => {
-    try {
-      let method = request.req.method;
-      const gqlResponse = await runHttpQuery([request, reply], {
-        method : method,
-        options: pluginOptions.graphql,
-        query  : method === 'POST' ? request.body : request.query,
-      });
-      
-      // bypass Fastify's response layer, so we can avoid having to
-      // parse the serialized gqlResponse due to Fastify's internal 
-      // JSON serializer seeing our Content-Type header and assuming 
-      // the response payload is unserialized
-      reply.sent = true
-      reply.res.setHeader('Content-Type', 'application/json');
-      reply.res.end(gqlResponse);
-    } catch (error) {
-      if ('HttpQueryError' !== error.name) {
+export interface FastifyGraphQLOptions {
+  prefix: string;
+  graphiql?: boolean;
+  graphiql_prefix?: string;
+  graphiql_endpoint?: string;
+  graphql: Omit<GraphQLOptions, 'SchemaHash'>;
+}
+
+const GraphQLPlugin = (app: FastifyInstance, options: FastifyGraphQLOptions, next: (err?: Error) => void) => {
+  const handler = async (req: FastifyRequest, res: FastifyReply) => {
+    const promise = new Promise((resolve) => 
+      resolve(runHttpQuery([req, res], {
+        method: req.method,
+        options: options.graphql,
+        query: req.method === 'POST' ? req.body : req.query,
+        request: {
+          url: req.raw.url,
+          method: req.raw.method,
+          headers: req.raw.headers as any,
+        },
+      }
+    )));
+
+    promise.then((gqlResponse) => 
+      res.header('Content-Type', 'application/json').send((gqlResponse as any)?.graphqlResponse)
+    ).catch((error) => {
+      if ('HttpQueryError' !== error.name) 
         throw error;
-      }
 
-      if (error.headers) {
-        Object.keys(error.headers).forEach(header => {
-          reply.header(header, error.headers[header]);
-        });
-      }
+      if (error.headers) Object.keys(error.headers).forEach(header =>
+          res.header(header, error.headers[header]));
 
-      reply.code(error.statusCode);
-      // error.message is actually a stringified GQL response, see
-      // comment @ line 19 for why we bypass Fastify's response layer
-      if (error.isGraphQLError) {
-        reply.sent = true
-        reply.res.setHeader('Content-Type', 'application/json');
-        reply.res.end(error.message);
-      } else {
-        reply.send(error.message);
-      }
-    }
-  };
-  
-  fastify.get('/', handler);
-  fastify.post('/', handler);
-  
-  //TODO determine if this is really the best way to have Fastify not 404 on an invalid HTTP method
-  fastify.setNotFoundHandler((request, reply) => {
-    if (request.req.method !== 'POST' && request.req.method !== 'POST') {
-      reply.code(405);
-      reply.header('allow', ['GET', 'POST']);
-    } else {
-      reply.code(404);
-    }
-    reply.send();
+      res.code(error.statusCode)
+        .send(error.message);
+    });
+  }
+
+  app.all('/', (req, res):void => {
+    // Only allow POST and GET methods
+    if(req.method !== 'POST' && req.method !== 'GET')
+      res.code(405).header('allowed', ['POST', 'GET']).send('Method Not Allowed');
+
+    // Otherwise, handle the request
+    else handler(req, res);
   });
-  
+
+  // If graphiql is enabled, add the graphiql route
+  if(options?.graphiql === true) graphiQL(app, {
+    prefix: options.graphiql_prefix ||'/graphiql',
+    endpoint: options.graphiql_endpoint || options.prefix,
+  });
+
   next();
 }
 

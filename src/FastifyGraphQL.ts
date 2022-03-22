@@ -1,19 +1,5 @@
-import FastifyPlugin from 'fastify-plugin';
-
 import GraphQLPlugin from "./GraphQLPlugin";
-import GraphiQLPlugin from "./GraphiQLPlugin";
-import {FastifyInstance, Middleware} from "fastify";
+import { FastifyInstance } from "fastify";
 
-// prevent fastify-plugin from stripping our prefix
-const fp = (plugin: Middleware<any, any, any>) =>
-  FastifyPlugin(function (fastify: FastifyInstance<any, any, any>, opts: object, next: Function) {
-    fastify.register(plugin, opts);
-    next()
-  }, {
-    fastify: '>=0.40.0',
-  });
-
-const graphqlFastify = fp(GraphQLPlugin);
-const graphiqlFastify = fp(GraphiQLPlugin);
-
-export { graphqlFastify, graphiqlFastify };
+export default (fastify: FastifyInstance, options: any, next: (err?: Error) => void) =>
+  GraphQLPlugin(fastify, options, next);

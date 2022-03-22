@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.0.0"></a>
+# [5.0.0](https://github.com/GrzegorzManiak/fastify-graphql/compare/v4.0.0...v5.0.0) (2018-03-05)
+
+### Bug Fixes 
+
+Updated all dependacys to latest versions.
+
+### BREAKING CHANGES
+
+Completely rewritten the plugin, small change to your implementation should be enough to migrate.
+
 <a name="4.0.0"></a>
 # [4.0.0](https://github.com/sirsavary/fastify-graphql/compare/v3.1.11...v4.0.0) (2018-03-05)
 

@@ -40,12 +40,14 @@
   "dependencies": {
     "apollo-server-core": "^3.6.0",
     "apollo-server-module-graphiql": "1.4.0",
-    "fastify": "^3.2.0"
+    "fastify": "^3.2.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@types/graphql": "^14.5.0",
+    "@types/lodash": "^4.14.180",
     "@types/node": "^17.0.0",
-    "graphql": "^13.0.0",
+    "graphql": ">13.0.0",
     "graphql-tools": "^8.0.0",
     "nodemon": "^2.0.15",
     "ts-node": "^10.6.0",

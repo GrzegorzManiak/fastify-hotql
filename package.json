@@ -1,15 +1,15 @@
 {
   "name": "fastify-hotql",
-  "version": "5.1.2",
+  "version": "5.1.4",
   "description": "Apollo server plugin for Fastify with hot reloading",
-  "main": "src/index.js",
-  "types": "src/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "complie": "tsc"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GrzegorzManiak/fastify-hothql.git"
+    "url": "git+https://github.com/GrzegorzManiak/fastify-hotql.git"
   },
   "keywords": [
     "fastify",
@@ -33,9 +33,9 @@
     }
   ],
   "license": "MIT",
-  "homepage": "https://github.com/GrzegorzManiak/fastify-hothql#readme",
+  "homepage": "https://github.com/GrzegorzManiak/fastify-hotql#readme",
   "bugs": {
-    "url": "https://github.com/GrzegorzManiak/fastify-hothql/issues"
+    "url": "https://github.com/GrzegorzManiak/fastify-hotql/issues"
   },
   "dependencies": {
     "apollo-server-core": "^3.6.0",

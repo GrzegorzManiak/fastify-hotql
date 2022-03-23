@@ -52,17 +52,17 @@ export default class {
 
         // Run the query
         else if (this.#schema) runHttpQuery([req, res], {
-            method: req.method,
-            options: {
-                rootValue: this.#rootValue,
-                schema: this.#schema,
-                schemaHash: this.#schemaHash
-            },
-            query: req.method === 'POST' ? req.body : req.query,
-            request: {
-            url: req.raw.url,
-            method: req.raw.method,
-            headers: req.raw.headers as any,
+                method: req.method,
+                options: {
+                    rootValue: this.#rootValue,
+                    schema: this.#schema,
+                    schemaHash: this.#schemaHash
+                },
+                query: req.method === 'POST' ? req.body : req.query,
+                request: {
+                url: req.raw.url,
+                method: req.raw.method,
+                headers: req.raw.headers as any,
             },
         }
         
@@ -74,8 +74,10 @@ export default class {
         }).catch((error) => {
             if (error.headers) Object.keys(error.headers).forEach(header =>
                 res.header(header, error.headers[header]));
-  
-            res.code(error.statusCode).send(error.message);
+            
+            const msg = JSON.parse(error.message).errors.map((err:any) => err = {message: err.message});
+
+            res.code(error.statusCode).send({errors: msg});
         });
 
         else res.code(202).send('Server Provided No Schema');

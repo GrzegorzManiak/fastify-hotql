@@ -75,4 +75,3 @@ helloWorld.rootValue();
 // And you can get the schema
 helloWorld.schema();
 ```
-

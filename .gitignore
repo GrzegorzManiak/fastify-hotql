@@ -60,5 +60,5 @@ typings/
 .vscode
 jsconfig.json
 
-out
 package-lock.json
+lib

@@ -2,7 +2,7 @@
 
 import { buildSchema } from 'graphql';
 import Fastify from "fastify";
-import hotQL from './src/';
+import hotQL from './src';
 
 const app = Fastify();
 
@@ -10,7 +10,6 @@ const gql = new hotQL(app, {
     prefix: '/graphql',
     graphiql: true,
     graphiql_prefix: '/graphql/explore',
-    graphiql_endpoint: '/graphql/explore',
 });
 
 let hello = gql.addSchema(buildSchema(`
@@ -25,7 +24,6 @@ let world = gql.addSchema(buildSchema(`
     }
 `), { test: 'world' });
 
-world.remove();
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

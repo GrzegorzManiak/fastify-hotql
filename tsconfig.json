@@ -10,14 +10,14 @@
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "outDir": "./out/"
+    "outDir": "./lib/"
   },
   "include": [
     "./src/**/*.ts"
-  ],
+, "test/index.ts"  ],
   "exclude": [
     "node_modules",
-    "./out"
+    "lib"
   ],
   "compileOnSave": true
 }

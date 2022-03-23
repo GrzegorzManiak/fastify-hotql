@@ -1,15 +1,14 @@
 {
   "name": "fastify-graphql",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "Apollo server plugin for Fastify with hot reloading",
   "main": "out/FastifyGraphQL.js",
-  "typings": "out/FastifyGraphQL.d.ts",
   "engines": {
     "npm": "> 8.0.0"
   },
   "scripts": {
-    "prepare": "./node_modules/typescript/bin/tsc --extendedDiagnostics",
-    "release": "standard-version",
+    "complie": "tsc",
+    "nodemon": "nodemon demo.ts",
     "test": "./node_modules/mocha/bin/mocha $NODE_DEBUG_OPTION --require ts-node/register ./test/**/*.test.ts"
   },
   "repository": {
@@ -40,10 +39,12 @@
   "dependencies": {
     "apollo-server-core": "^3.6.0",
     "apollo-server-module-graphiql": "1.4.0",
-    "fastify": "^3.2.0"
+    "fastify": "^3.2.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@types/graphql": "^14.5.0",
+    "@types/lodash": "^4.14.180",
     "@types/node": "^17.0.0",
     "graphql": "^16.3.0",
     "graphql-tools": "^8.0.0",

@@ -2,42 +2,35 @@
 
 import { buildSchema } from 'graphql';
 import Fastify from "fastify";
-import graphQLfastify from './src/FastifyGraphQL';
-import { FastifyGraphQLOptions } from './src/GraphQLPlugin';
+import hotQL from './src/';
 
-const createFastifyApp = async(gqlOptions: FastifyGraphQLOptions): Promise<any> =>{
-  const app = Fastify();
+const app = Fastify();
 
-  app.register(graphQLfastify, gqlOptions);
-  
-  app.get('/', (req, res) => {
-    res.send('Hello World!');
-  })
+const gql = new hotQL(app, {
+    prefix: '/graphql',
+    graphiql: true,
+    graphiql_prefix: '/graphql/explore',
+    graphiql_endpoint: '/graphql/explore',
+});
 
-  await app.listen(80);
-
-  return app.server;
-}
-
-createFastifyApp({
-  prefix : '/graphql',
-  graphiql: true,
-  graphiql_prefix: '/explorer',
-  graphiql_endpoint: '/graphql',
-  graphql: {
-    schema: buildSchema(`
-      type Query {
+let hello = gql.addSchema(buildSchema(`
+    type Query {
         hello: String
-      }
+    }
+`), { hello: () => new Date() });
 
-      type Mutation {
-        hello: String
-      }
-    `),
-    rootValue: {
-      hello: (a:any, b:any, c:any) => {
-        return 'Hello world!'
-      },
-    },
-  },
-}).then(() => console.log('Server is running on http://localhost:80'));
+let world = gql.addSchema(buildSchema(`
+    type Query {
+        test: String
+    }
+`), { test: 'world' });
+
+world.remove();
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+})
+
+app.listen(80).then(() => {
+  console.log(`server listening on http://localhost:80`);
+})

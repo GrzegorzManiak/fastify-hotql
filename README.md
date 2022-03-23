@@ -15,49 +15,64 @@ And now, this project was forked from from [jeromemacias](https://github.com/jer
 
 ```bash
 # Yet to be uploaded
-npm install --save fastify-hotql graphql
+npm install --save fastify-hotql
 ```
 
 ## Usage
 
 ```js
+import { buildSchema } from 'graphql';
 import fastify from "fastify";
 import hotQL from 'fastify-hotql';
 
 const app = fastify();
 
-app.register(hotQL, {
-  // This is where the app will mount to
-  prefix : '/graphql',
+// Initialize hotQL
+const gql = new hotQL(app, {
+  prefix: '/graphql',
 
-  // Should we use graphiql?
+  // You can start graphiql by setting this to true
+  // PS: The paramaters below are optional
   graphiql: true,
-
-  // You can specify where graphiql will mount to
-  // It mounts after the grapql prefix
-  // Ps: It will be mounted to /graphql/graphiql by default
-  graphiql_prefix: '/explorer',
-
-  // You also can specify the graphql endpoint,
-  // It defaults to the prefix
-  graphiql_endpoint: '/graphql',
-  
-  // GraphQL settings
-  graphql: {
-    schema: buildSchema(`
-      type Query {
-        hello: String
-      }
-    `),
-    rootValue: {
-      hello: () => 'Hello world!',
-    },
-  }
+  graphiql_prefix: '/graphql/explore',
+  graphiql_endpoint: '/graphql/explore',
 });
+
+// Or you can do this later on the fly
+gql.startGraphiQL({
+  // PS: Both of these are optional
+  prefix: '/graphql/explore',
+  endpoint: '/graphql/explore',
+});
+
+// And for some reason, you can reload the schema and rootValues
+// without having to restart the server
+gql.reload();
+
+// Start the server
+app.listen(80).then(() => {
+  console.log(`server listening on http://localhost:80`);
+})
+
+// Add a schema and rootValue to the hotQL instance
+// You can do this before we start the server or after
+const helloWorld = gql.addSchema(buildSchema(`
+  type Query {
+      hello: String
+  }`,
+  { hello: () => 'Hello World!' }
+);
+
+// You can also remove a schema
+helloWorld.remove();
+
+// You can get the hash of the schema
+helloWorld.hash();
+
+// You can get the rootValue
+helloWorld.rootValue();
+
+// And you can get the schema
+helloWorld.schema();
 ```
 
-## Configuration
-
-Both plugins need to be given a prefix, under which they will mount.
-
-GraphQL settings extends [GraphQLServerOptions](https://github.com/apollographql/apollo-server/blob/master/packages/apollo-server-core/src/graphqlOptions.ts#L9-L37)

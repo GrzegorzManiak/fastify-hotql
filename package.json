@@ -4,13 +4,8 @@
   "description": "Apollo server plugin for Fastify with hot reloading",
   "main": "src/index.js",
   "types": "src/index.d.ts",
-  "engines": {
-    "npm": "> 8.0.0"
-  },
   "scripts": {
-    "complie": "tsc",
-    "nodemon": "nodemon demo.ts",
-    "test": "./node_modules/mocha/bin/mocha $NODE_DEBUG_OPTION --require ts-node/register ./test/**/*.test.ts"
+    "complie": "tsc"
   },
   "repository": {
     "type": "git",

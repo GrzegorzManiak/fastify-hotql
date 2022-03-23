@@ -1,7 +1,6 @@
 # fastify-hotql
-[![Travis](https://img.shields.io/travis/sirsavary/fastify-graphql.svg)](https://travis-ci.org/sirsavary/fastify-graphql)
-[![npm](https://img.shields.io/npm/v/fastify-graphql.svg)](https://www.npmjs.com/package/fastify-graphql)
-[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+<!-- [![Travis](https://app.travis-ci.com/GrzegorzManiak/fastify-hotql.svg?branch=master)](https://app.travis-ci.com/github/GrzegorzManiak/fastify-hotql) -->
+[![npm](https://img.shields.io/npm/v/fastify-hotql.svg)](https://www.npmjs.com/package/fastify-hotql)
 
 A plugin for [Fastify](https://github.com/fastify/fastify) that adds GraphQL and GraphiQL support, and hot reloading of schemas and resolvers.
 

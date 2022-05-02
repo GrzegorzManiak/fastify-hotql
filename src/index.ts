@@ -26,6 +26,12 @@ export interface FastifySchemaObject {
     rootValue?: any;
 }
 
+export type RootFunc = (root: any, args: any, context: any, info: any) => any;
+
+export interface rootValue {
+    [key: string]: {} | string | number | RootFunc;
+}
+
 export default class {
     #app: FastifyInstance;
 
@@ -34,7 +40,7 @@ export default class {
     #schemas: Array<() => FastifySchemaObject> = [];
 
     #schema: GraphQLSchema | undefined;
-    #rootValue: any;
+    #rootValue: rootValue;
     #schemaHash: SchemaHash;
 
     #graphiql_endpoint: string;
@@ -46,10 +52,17 @@ export default class {
     }
 
     #graphqlHandler(req: FastifyRequest, res: FastifyReply) {
+        this.#rootValue = Object.assign(this.#rootValue, {
+            fastify: {
+                req,
+                res
+            }
+        } as { fastify: { req: FastifyRequest, res: FastifyReply } });
+        
         // Only allow POST and GET methods
         if(req.method !== 'POST' && req.method !== 'GET')
             res.code(405).header('allowed', ['POST', 'GET']).send('Method Not Allowed');
-
+        
         // Run the query
         else if (this.#schema) runHttpQuery([req, res], {
                 method: req.method,
@@ -60,10 +73,10 @@ export default class {
                 },
                 query: req.method === 'POST' ? req.body : req.query,
                 request: {
-                url: req.raw.url,
-                method: req.raw.method,
-                headers: req.raw.headers as any,
-            },
+                    url: req.raw.url,
+                    method: req.raw.method,
+                    headers: req.raw.headers as any,
+                },
         }
         
         // ------ Success ------ //
@@ -130,7 +143,7 @@ export default class {
             this.#schemaHash = this.#calculateSchemaHash(this.#schema);
     }
 
-    addSchema(schema: GraphQLSchema, rootValue?: any):{ 
+    addSchema(schema: GraphQLSchema, rootValue?: rootValue):{ 
         remove: () => void 
         hash: () => SchemaHash,
         schema: () => GraphQLSchema,

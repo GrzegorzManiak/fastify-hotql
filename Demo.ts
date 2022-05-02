@@ -22,7 +22,18 @@ let world = gql.addSchema(buildSchema(`
     type Query {
         test: String
     }
-`), { test: 'world' });
+`), {
+    test: (
+        root,
+        args,
+        context,
+        info,
+    ) => {
+        console.log(context)
+
+        return 'world';
+    }
+});
 
 
 app.get('/', (req, res) => {

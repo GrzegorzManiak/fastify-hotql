@@ -1,6 +1,6 @@
 {
   "name": "fastify-hotql",
-  "version": "5.1.4",
+  "version": "5.1.5",
   "description": "Apollo server plugin for Fastify with hot reloading",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
